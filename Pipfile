@@ -1,0 +1,77 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+# Dev tools
+flake8 = "*"
+mypy = "*"
+pylint = "*"
+autopep8 = "*"
+black = "*"
+isort = "*"
+rope = "*"
+# Documentation
+sphinx = "*"
+# Testing
+tox = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-mock = "*"
+pytest-randomly = "*"
+pytest-xdist = "*"
+# Django dev tools
+django-extensions = "*"
+django-debug-toolbar = "*"
+django-silk = "*"
+django-stubs = "==1.1.0"
+pylint-django = "*"
+# Django - Testing
+pytest-django = "*"
+django-coverage-plugin = "*"
+factory-boy = "*"
+# DRF - Browsable API
+markdown = "*"
+pygments = "*"
+# DRF - Core API
+coreapi = "*"
+pyyaml = "*"
+# DRF - mypy
+djangorestframework-stubs = "==0.4.0"
+
+[packages]
+gunicorn = ">=19.9.0"
+psycopg2-binary = ">=2.8"
+pillow = ">=6.2.1"
+# Django
+django = ">=2.2,<2.3"
+django-environ = ">=0.4.5"
+django-health-check = ">=3.11.1"
+django-csp = ">=3.5"
+django-feature-policy = ">=3.0.0"
+django-http-referrer-policy = ">=1.0"
+django-cors-headers = ">=3.0.0"
+django-filter = ">=2.0.0"
+django-guardian = ">=1.5.0"
+whitenoise = ">=4.1.4"
+django-storages = ">=1.7.2"
+boto3 = ">=1.10.0"
+django-anymail = ">=7.0.0"
+graphene-django = ">=2.6"
+# DRF
+djangorestframework = ">=3.10.3"
+djangorestframework-simplejwt = ">=4.0.0"
+djangorestframework-camel-case = ">=1.1.2"
+djoser = ">=2.0.3"
+
+[requires]
+python_version = "3.6"
+
+[pipenv]
+allow_prereleases = true
+
+[scripts]
+vet = "python setup.py vet"
+fmt = "python setup.py fmt"
+fmtchk = "python setup.py fmtchk"
