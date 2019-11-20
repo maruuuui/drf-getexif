@@ -21,11 +21,13 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework.routers import DefaultRouter
 from appname import views
-from appname.views import SampleViewSet
+from appname.views import SampleViewSet, ReceiveImageAPIView
 
 router = routers.DefaultRouter()
 router.register("sample", SampleViewSet)
 urlpatterns = [
+    path("", views.index),
     path("admin/", admin.site.urls),
     path("api/v1/", include(router.urls)),
+    path("api/v1/asset/", ReceiveImageAPIView.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
