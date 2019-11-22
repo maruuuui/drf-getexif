@@ -5,16 +5,26 @@ from .models import Sample
 from . import getexif
 
 
-class ImageSerializer(serializers.ModelSerializer):
+class ImageSerializer(serializers.Serializer):
     image = serializers.ImageField()
+
+    def create(self, validated_data):
+        print("ImageSerializer.create()")
+        image = validated_data.get("image")
+        return {
+            "image": image,
+        }
+
+
+# class ImageListSerializer(serializers.ListSerializer):
+#     child = ImageSerializer()
 
 
 class SampleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sample
         # fields = ["title", "filmed_at", "image", "created_at", "updated_at"]
-        fields = ["id", "title", "filmed_at",
-                  "image", "created_at", "updated_at"]
+        fields = ["id", "title", "filmed_at", "image", "created_at", "updated_at"]
         read_only_fields = ["filmed_at"]
         # extra_kwargs = {
         #     'filmed_at': {'write_only': True},
