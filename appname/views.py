@@ -64,7 +64,7 @@ class ReceiveImageAPIView(views.APIView):
                 print("invalid!!!")
                 print(serializer.errors)
                 return Response(serializer.errors)
-            print("validated_data:",serializer.validated_data)
+            print("validated_data:", serializer.validated_data)
             validated_image = serializer.validated_data["image"]
             # print(type(validated_image))
             # print(validated_image)
