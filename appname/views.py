@@ -1,7 +1,8 @@
 import cv2
 import numpy
 from django.shortcuts import render
-from django.http import QueryDict
+from django.core.files import File
+from django.http import QueryDict, HttpResponse
 from rest_framework import views, viewsets
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
@@ -13,7 +14,10 @@ from .serializers import (
     InputSerializer,
     MetadataSerializer,
 )
+import io
 from rest_framework.parsers import JSONParser
+
+from PIL import Image, ImageDraw
 
 
 class RectanglesAPIView(views.APIView):
@@ -31,19 +35,31 @@ class RectanglesAPIView(views.APIView):
 
         validated_image = serializer.validated_data["image"]
         validated_json = serializer.validated_data["metadata"]
-        f = open(validated_json.temporary_file_path(), "r")
-        json_dict = json.load(f)
-        print(json_dict)
+        json_dict = json.load(validated_json)
+        # print(json_dict)
 
         metadata_serializer = MetadataSerializer(data=json_dict, many=True)
-        if metadata_serializer.is_valid():
-            return Response(metadata_serializer.data)
-        else:
-            return Response(metadata_serializer.errors)
+
+        img = Image.open(validated_image)
+        draw = ImageDraw.Draw(img)
+
+        buffer = io.BytesIO()  # メモリ上への仮保管先を生成
+        img.save(buffer, format="JPEG")  # pillowのImage.saveメソッドで仮保管先へ保存
+        # response = HttpResponse(
+        #     buffer.getvalue(), content_type="image/jpeg")
+        response = HttpResponse(content_type="image/jpeg")
+        response["Content-Disposition"] = 'attachment;filename="response.jpg"'
+        img.save(response, format="JPEG")  # pillowのImage.saveメソッドで仮保管先へ保存
+        return response
+        # if metadata_serializer.is_valid():
+        #     return Response(metadata_serializer.data)
+        # else:
+        #     return Response(metadata_serializer.errors)
 
 ############################################################
 
 ############################################################
+
 
 def index(request):
     """image送信画面"""

@@ -5,8 +5,9 @@
 </head>
 
 <body>
-    <form action="api/v1/asset/" method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" multiple="multiple" />
+    <form action="api/v1/rectangles/" method="POST" enctype="multipart/form-data">
+        image<input type="file" name="image" />
+        metadata<input type="file" name="metadata" />
         <input type="submit">
     </form>
 </body>
