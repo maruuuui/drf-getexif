@@ -5,6 +5,16 @@ from .models import Sample
 from . import getexif
 
 
+class MetadataSerializer(serializers.Serializer):
+    min_x = serializers.FloatField()
+    max_x = serializers.FloatField()
+
+
+class InputSerializer(serializers.Serializer):
+    image = serializers.ImageField()
+    metadata = serializers.FileField()
+
+
 class ImageSerializer(serializers.Serializer):
     image = serializers.ImageField()
 
@@ -14,10 +24,6 @@ class ImageSerializer(serializers.Serializer):
         return {
             "image": image,
         }
-
-
-# class ImageListSerializer(serializers.ListSerializer):
-#     child = ImageSerializer()
 
 
 class SampleSerializer(serializers.ModelSerializer):

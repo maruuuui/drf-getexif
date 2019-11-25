@@ -5,35 +5,45 @@ from django.http import QueryDict
 from rest_framework import views, viewsets
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
-
+import json
 from .models import Sample
-from .serializers import SampleSerializer, ImageSerializer  # , ImageListSerializer
+from .serializers import (
+    SampleSerializer,
+    ImageSerializer,
+    InputSerializer,
+    MetadataSerializer,
+)
+from rest_framework.parsers import JSONParser
 
 
-# class ReceiveImageAPIViewMod(views.APIView):
-#     """画像を受け取るAPI改"""
+class RectanglesAPIView(views.APIView):
+    parser_classes = (MultiPartParser, JSONParser)
 
-#     parser_classes = (MultiPartParser,)
+    def post(self, request):
+        # receive image files
+        print(request.data)
+        print(request.data["metadata"])
+        # print(type(request.data["metadata"]))
+        # print(request.POST["metadata"])
+        serializer = InputSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors)
 
-#     def post(self, request):
-#         # receive image files
-#         print(request.data)
-#         files = request.data.getlist("image")
-#         print(files)
+        validated_image = serializer.validated_data["image"]
+        validated_json = serializer.validated_data["metadata"]
+        f = open(validated_json.temporary_file_path(), "r")
+        json_dict = json.load(f)
+        print(json_dict)
 
-#         response_arr = []
+        metadata_serializer = MetadataSerializer(data=json_dict, many=True)
+        if metadata_serializer.is_valid():
+            return Response(metadata_serializer.data)
+        else:
+            return Response(metadata_serializer.errors)
 
-#         serializer = ImageListSerializer(data=request.data)
+############################################################
 
-#         if not serializer.is_valid():
-#             print("invalid!!!")
-#             print(serializer.errors)
-#             return Response(serializer.errors)
-#         print(serializer.validated_data)
-#         # validated_image = serializer.validated_data["image"]
-
-#         return Response({"img_arr": "response_arr"})
-
+############################################################
 
 def index(request):
     """image送信画面"""
@@ -48,6 +58,7 @@ class ReceiveImageAPIView(views.APIView):
     def post(self, request):
         # receive image files
         print(request.data)
+        print(request.POST["metadata"])
         files = request.data.getlist("image")
         print(files)
 
