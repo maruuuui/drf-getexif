@@ -240,3 +240,99 @@ curl -X POST http://127.0.0.1:8000/api/v1/overlay-image/ -F file_field_name=@sam
 ## task
 
 - 関数内で渡す画像の型の設定
+- base64には元のファイル名の情報は含まれる？
+
+<!-- 
+API部分ここまで
+ -->
+
+## ファイルアップロード
+
+### リクエスト
+
+"
+{
+	"memo":"(text)",
+    "source_images":[
+        {
+        "base64_image": "(base64_image)", // 画像本体
+        "file_name": "(filename)"        // ファイル名
+        }
+    ]
+}
+
+### 内部処理
+1.DBに画像情報を保存（exifデータ含む）
+2.S3に画像ファイルを保存
+
+### レスポンス
+成功:200
+失敗:500,エラーメッセージ
+失敗:400,エラーメッセージ
+
+
+
+
+## Lambda
+
+lambda
+・S3にファイルが上がるとうごく
+・S3に上がった画像ファイル名（UUID）を放電クランプのAPIに渡すだけ
+	lambdaをqueueに置き換えできる
+	
+	
+
+## 放電クランプAPI本体
+
+### リクエスト(POST)
+
+{
+"source_images_uuid":[
+(UUID),
+
+]
+}
+### レスポンス
+成功:200,完了画像キー
+失敗:500,エラーメッセージ
+失敗:400,エラーメッセージ
+
+### 完了後の標準出力
+成功:success,完了画像キー
+失敗:fail,エラーメッセージ
+
+
+# ## S3バケット（temp）
+# /yyyy/mm/dd/(UUID)/(originalFilename).jpg
+
+## 永続S3バケット
+/static
+/media
+	/yyyy/mm/dd/(UUID)
+		/source
+			/(originalFilename).jpg
+		/retouched
+			/(originalFilename).jpg
+		/overlayed
+			/(originalFilename).jpg
+		/crop
+			/1
+				/(originalFilename).jpg
+			/2
+			/3
+
+## DB
+source_image
+	id(uuid),
+	name,
+	point,
+	filming_datetime,
+	photo_url(永続S3パス),
+	created_at,
+	updatedat
+
+# temp_source_image
+#	id(uuid),
+#	temp_photo_url(tempS3パス)
+#	created_at
+#	updatedat
