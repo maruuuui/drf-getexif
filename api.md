@@ -240,6 +240,7 @@ curl -X POST http://127.0.0.1:8000/api/v1/overlay-image/ -F file_field_name=@sam
 ## task
 
 - 関数内で渡す画像の型の設定
+- base64エンコードされた文字列にファイル名のデータは含まれる？
 - base64には元のファイル名の情報は含まれる？
 
 <!-- 
