@@ -149,45 +149,6 @@ curl -X POST curl -X POST https://dischargeclamp.dev.inhouse.tepsyslabs.com/api/
 
 ### リクエスト
 
-```bash
-curl -X POST http://127.0.0.1:8000/api/v1/overlay-image/ -F file_field_name=@sample_clamp.jpg -F 
-"inference_data=
-{
-    \"inference_data\":[
-        {
-            \"topleft\":{
-                \"y\":0.0458507836,
-                \"x\":0.0100839734,
-            },
-            \"bottomright\":{
-                \"y\":0.980554342,
-                \"x\":0.700636327,
-            },
-            \"inference\":{
-                \"label\":\"actuated\",
-                \"score\":0.48
-            }
-        },
-        {
-            \"topleft\":{
-                \"y\":0.1058507836,
-                \"x\":0.2000839734,
-            },
-            \"bottomright\":{
-                \"y\":0.650554342,
-                \"x\":0.500636327,
-            },
-            \"inference\":{
-                \"label\":\"unactuated\",
-                \"score\":0.52
-            }
-        }
-    ]
-}
-"
--o result.jpg
-```
-
 ```json
 {
     "source_images":[
@@ -237,20 +198,20 @@ curl -X POST http://127.0.0.1:8000/api/v1/overlay-image/ -F file_field_name=@sam
 
 "overlayed_images": ["処理後画像"]
 
-## task
 
-- 関数内で渡す画像の型の設定
-- base64エンコードされた文字列にファイル名のデータは含まれる？
-- base64には元のファイル名の情報は含まれる？
 
-<!-- 
-API部分ここまで
- -->
+
+
+
+
+
+
 
 ## ファイルアップロード
 
 ### リクエスト
 
+```
 "
 {
 	"memo":"(text)",
@@ -286,13 +247,15 @@ lambda
 ## 放電クランプAPI本体
 
 ### リクエスト(POST)
-
+```
 {
-"source_images_uuid":[
-(UUID),
-
-]
+	"source_images_uuid":[
+		(UUID),
+		
+	]
 }
+```
+
 ### レスポンス
 成功:200,完了画像キー
 失敗:500,エラーメッセージ
@@ -303,10 +266,7 @@ lambda
 失敗:fail,エラーメッセージ
 
 
-# ## S3バケット（temp）
-# /yyyy/mm/dd/(UUID)/(originalFilename).jpg
-
-## 永続S3バケット
+## S3バケット
 /static
 /media
 	/yyyy/mm/dd/(UUID)
@@ -323,17 +283,40 @@ lambda
 			/3
 
 ## DB
-source_image
+inspection_record
 	id(uuid),
 	name,
 	point,
 	filming_datetime,
-	photo_url(永続S3パス),
+	source_image_url,
+	retouched_image_url,
 	created_at,
-	updatedat
+	updated_at
 
-# temp_source_image
-#	id(uuid),
-#	temp_photo_url(tempS3パス)
-#	created_at
-#	updatedat
+inference_result
+	inspection_record_id,
+	overlayed_image_url,
+	created_at,
+	updated_at
+
+inferenced_clamp
+	inference_record_id,
+	crop_number,
+	image_url,
+	detection_score,
+	detection_box_min_y,
+	detection_box_min_x,
+	detection_box_max_y,
+	detection_box_max_x,
+	clamp_condition(char(64)),
+	clamp_condition_score,
+	created_at,
+	updated_at
+
+
+
+
+## task
+
+- 関数内で渡す画像の型の設定
+- 
