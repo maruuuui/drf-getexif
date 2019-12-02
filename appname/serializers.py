@@ -4,6 +4,12 @@ from rest_framework import serializers
 from .models import Sample
 from . import getexif
 
+from drf_base64.fields import Base64ImageField
+
+
+
+class ProductSerializer(serializers.Serializer):
+    encoded_data = serializers.CharField()
 
 class MetadataSerializer(serializers.Serializer):
     min_x = serializers.FloatField()
@@ -11,8 +17,8 @@ class MetadataSerializer(serializers.Serializer):
 
 
 class InputSerializer(serializers.Serializer):
-    image = serializers.ImageField()
-    metadata = serializers.FileField()
+    image = serializers.ImageField(help_text="aaaa")
+    metadata = serializers.FileField(help_text="aaaa")
 
 
 class ImageSerializer(serializers.Serializer):

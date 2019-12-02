@@ -65,13 +65,11 @@ curl -X POST https://dischargeclamp.dev.inhouse.tepsyslabs.com/api/v1/detection/
 -F file_field_name=@image_file -k
 ``` -->
 
-TFservingの条件を極めるためURLも引数に入れたほうが良い
-
 ```json
 {
     "tf_serving_url":"(URL)",
     "images":[
-        "image" //画像本体
+        "image" //画像本体(pillowで開く前のデータ)
     ],
     "file_names":[// ファイル名(オプション)
         "source_file1",
@@ -95,7 +93,85 @@ TFservingの条件を極めるためURLも引数に入れたほうが良い
             "max_y":0.980554342,
             "max_x":0.700636327
         }
+    },
+    {
+        "source_file_name":"sample_clamp.jpg",
+        "class_id":1,
+        "class_name":"clamp", // 返り値にはdetection class以外にclass名も必要
+        "score":0.37508297,
+        "box":{
+            "min_y":0.0458507836,
+            "min_x":0.0100839734,
+            "max_y":0.980554342,
+            "max_x":0.700636327
+        }
+    },
+    {
+        "source_file_name":"sample_clamp2.jpg",
+        "class_id":1,
+        "class_name":"clamp", // 返り値にはdetection class以外にclass名も必要
+        "score":0.37508297,
+        "box":{
+            "min_y":0.0458507836,
+            "min_x":0.0100839734,
+            "max_y":0.980554342,
+            "max_x":0.700636327
+        }
     }
+]
+[
+    [
+        {
+            "source_file_name":"sample_clamp.jpg",
+            "class_id":1,
+            "class_name":"clamp", // 返り値にはdetection class以外にclass名も必要
+            "score":0.37508297,
+            "box":{
+                "min_y":0.0458507836,
+                "min_x":0.0100839734,
+                "max_y":0.980554342,
+                "max_x":0.700636327
+            }
+        },
+        {
+            "source_file_name":"sample_clamp.jpg",
+            "class_id":1,
+            "class_name":"clamp", // 返り値にはdetection class以外にclass名も必要
+            "score":0.37508297,
+            "box":{
+                "min_y":0.0458507836,
+                "min_x":0.0100839734,
+                "max_y":0.980554342,
+                "max_x":0.700636327
+            }
+        }
+    ],
+    [
+        {
+            "source_file_name":"sample_clamp2.jpg",
+            "class_id":1,
+            "class_name":"clamp", // 返り値にはdetection class以外にclass名も必要
+            "score":0.37508297,
+            "box":{
+                "min_y":0.0458507836,
+                "min_x":0.0100839734,
+                "max_y":0.980554342,
+                "max_x":0.700636327
+            }
+        },
+        {
+            "source_file_name":"sample_clamp2.jpg",
+            "class_id":1,
+            "class_name":"clamp", // 返り値にはdetection class以外にclass名も必要
+            "score":0.37508297,
+            "box":{
+                "min_y":0.0458507836,
+                "min_x":0.0100839734,
+                "max_y":0.980554342,
+                "max_x":0.700636327
+            }
+        }
+    ],
 ]
 ```
 
@@ -314,9 +390,25 @@ inferenced_clamp
 	updated_at
 
 
-
-
 ## task
 
 - 関数内で渡す画像の型の設定
-- 
+- base64にファイル名の情報は残る？
+
+### 物体検出
+
+引数の画像をpillowを意識させない形式に変更
+create_request=>あああああ_data
+visualize=>format_response_data
+class_name_listの引数化
+TF側にタイムアウト時間設定はあるか？
+requestsモジュールにタイムアウト時間設定はあるか？
+AIのAPIを呼ぶDjango側にタイムアウト時間設定はあるか？
+1リクエストで処理できるデータ容量上限？
+1レスポンスで処理できるデータ容量上限？
+TFの処理失敗時のハンドリングのため各エラーコードの調査。=>200以外のときはそのレスポンスを返せば呼び出し元で扱える
+命名規則
+関数の外だしと外部に公開しない関数名の先頭に`_`
+フォーマッタの適用
+mypyによる型チェック
+<!-- 画像サイズを統一する処理を関数内で行う とりあえず固定値リサイズで作り、余裕ができたら画像の最大サイズに統一する処理を書く -->

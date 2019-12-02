@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.core.files import File
 from django.http import QueryDict, HttpResponse
 from rest_framework import views, viewsets
-from rest_framework.parsers import MultiPartParser
+from rest_framework.parsers import MultiPartParser, FileUploadParser, FormParser
 from rest_framework.response import Response
 import json
 from .models import Sample
@@ -13,15 +13,35 @@ from .serializers import (
     ImageSerializer,
     InputSerializer,
     MetadataSerializer,
+    ProductSerializer
 )
 import io
 from rest_framework.parsers import JSONParser
 
 from PIL import Image, ImageDraw
+import base64
+class ProductAPIView(views.APIView):
+    # parser_classes = (MultiPartParser,)
+
+    def get_serializer(self):
+        return ProductSerializer()
+
+    def post(self, request):
+        print(request.data["contentData"])
+        
+        b64decoded_data = base64.b64decode(request.data['encoded_data']).decode('UTF-8')
+        data = JSONParser().parse(b64decoded_data)
+        # serializer = ProductSerializer(data=request.data)
+        # if not serializer.is_valid():
+        #     return Response(serializer.errors)
+        # return Response(serializer.validated_data)
 
 
 class RectanglesAPIView(views.APIView):
-    parser_classes = (MultiPartParser, JSONParser)
+    parser_classes = (MultiPartParser,)
+
+    def get_serializer(self):
+        return InputSerializer()
 
     def post(self, request):
         # receive image files
@@ -36,25 +56,33 @@ class RectanglesAPIView(views.APIView):
         validated_image = serializer.validated_data["image"]
         validated_json = serializer.validated_data["metadata"]
         json_dict = json.load(validated_json)
-        # print(json_dict)
+        print(json_dict)
 
         metadata_serializer = MetadataSerializer(data=json_dict, many=True)
 
-        img = Image.open(validated_image)
+        img = Image.open(validated_image).convert("RGB")
+        print("img",type(img))
         draw = ImageDraw.Draw(img)
-
-        buffer = io.BytesIO()  # メモリ上への仮保管先を生成
-        img.save(buffer, format="JPEG")  # pillowのImage.saveメソッドで仮保管先へ保存
+        print("draw",type(draw))
+        response = HttpResponse(content_type='image/jpg') 
+        img.save("rawresponse.jpg", "JPEG") 
+        img.save(response, "JPEG") 
+        response['Content-Disposition'] = 'attachment; filename="piece.jpg"' 
+        return response
+        
+        # buffer = io.BytesIO()  # メモリ上への仮保管先を生成
+        # img.save(buffer, format="JPEG")  # pillowのImage.saveメソッドで仮保管先へ保存
         # response = HttpResponse(
         #     buffer.getvalue(), content_type="image/jpeg")
-        response = HttpResponse(content_type="image/jpeg")
-        response["Content-Disposition"] = 'attachment;filename="response.jpg"'
-        img.save(response, format="JPEG")  # pillowのImage.saveメソッドで仮保管先へ保存
-        return response
-        # if metadata_serializer.is_valid():
-        #     return Response(metadata_serializer.data)
-        # else:
-        #     return Response(metadata_serializer.errors)
+        # response = HttpResponse(content_type="image/jpg")
+        # response["Content-Disposition"] = 'attachment;filename="response.jpg"'
+        # img.save(response, "JPEG")  # pillowのImage.saveメソッドで仮保管先へ保存
+        # return response
+
+label_color_dict ={
+    "unactivate":(0,255,0),
+    "activate":(255,0,0),
+}
 
 ############################################################
 

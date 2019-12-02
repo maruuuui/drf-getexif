@@ -16,13 +16,19 @@ Including another URLconf
 import debug_toolbar
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework.documentation import include_docs_urls
 
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from rest_framework.routers import DefaultRouter
 from appname import views
-from appname.views import SampleViewSet, ReceiveImageAPIView, RectanglesAPIView
+from appname.views import (
+    SampleViewSet,
+    ReceiveImageAPIView,
+    RectanglesAPIView,
+    ProductAPIView,
+)
 
 router = routers.DefaultRouter()
 router.register("sample", SampleViewSet)
@@ -32,7 +38,11 @@ urlpatterns = [
     path("api/v1/", include(router.urls)),
     path("api/v1/asset/", ReceiveImageAPIView.as_view()),
     path("api/v1/rectangles/", RectanglesAPIView.as_view()),
+    path("api/v1/product/", ProductAPIView.as_view()),
     # path("api/v2/asset/", ReceiveImageAPIViewMod.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
+urlpatterns += [path("__debug__/", include(debug_toolbar.urls))]
+urlpatterns += [
+    path("docs/", include_docs_urls()),
+]
