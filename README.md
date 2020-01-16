@@ -13,3 +13,8 @@ curl -i -X POST -F "image=@media/dog.jpg;image/jpeg" -F "metadata=@meta.json;typ
 
 coreapi action rectangles create -p image=media/dog.jpg -p metadata=meta.json
 ```
+
+gps
+```bash
+exiftool -GPSLongitudeRef=E -GPSLongitude=130.86455555555557 -GPSLatitudeRef=N -GPSLatitude=31.386555555555553 -GPSAltitude=41.47 IMGP5021.JPG
+```
